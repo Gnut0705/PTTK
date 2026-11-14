@@ -12,7 +12,8 @@ public class DocumentStatisticsDAO0 extends DAO0 {
         super();
     }
 
-    public ArrayList<DocumentStatistics0> getDocumentStats(Date startDate, Date endDate) {
+    // Bước 10: getDocumentStat() khớp chuẩn xác Sequence Diagram
+    public ArrayList<DocumentStatistics0> getDocumentStat(Date startDate, Date endDate) {
         ArrayList<DocumentStatistics0> result = new ArrayList<>();
         String sql = "{call getDocumentStats(?, ?)}";
         try (CallableStatement cs = con.prepareCall(sql)) {
@@ -34,5 +35,10 @@ public class DocumentStatisticsDAO0 extends DAO0 {
             e.printStackTrace();
         }
         return result;
+    }
+
+    // Giữ thêm alias getDocumentStats để tương thích ngược
+    public ArrayList<DocumentStatistics0> getDocumentStats(Date startDate, Date endDate) {
+        return getDocumentStat(startDate, endDate);
     }
 }

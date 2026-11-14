@@ -24,7 +24,8 @@ public class ReaderCardDAO0 extends DAO0 {
         }
     }
 
-    public String addReaderCard(String readerCode, String fullName, String phoneNumber,
+    // BƯỚC 7: addReaderCard0() khớp chuẩn xác 100% Sequence Diagram
+    public String addReaderCard0(String readerCode, String fullName, String phoneNumber,
                                  String address, String email, String cardCode,
                                  Date issuanceDate, Date expiryDate) {
         
@@ -100,5 +101,12 @@ public class ReaderCardDAO0 extends DAO0 {
         } finally {
             try { this.con.setAutoCommit(true); } catch (Exception e) { e.printStackTrace(); }
         }
+    }
+
+    // Giữ thêm alias addReaderCard để tương thích ngược
+    public String addReaderCard(String readerCode, String fullName, String phoneNumber,
+                                String address, String email, String cardCode,
+                                Date issuanceDate, Date expiryDate) {
+        return addReaderCard0(readerCode, fullName, phoneNumber, address, email, cardCode, issuanceDate, expiryDate);
     }
 }

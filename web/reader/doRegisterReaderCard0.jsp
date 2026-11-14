@@ -19,8 +19,8 @@
     // BƯỚC 6: Gọi lớp ReaderCardDAO0 yêu cầu lưu thông tin
     ReaderCardDAO0 dao = new ReaderCardDAO0();
     
-    // BƯỚC 7: Gọi hàm addReaderCard() (Truyền dữ liệu thô vào)
-    String result = dao.addReaderCard(readerCode, fullName, phoneNumber, address, email, cardCode, issuanceDate, expiryDate);
+    // BƯỚC 7: Gọi hàm addReaderCard0() (Truyền dữ liệu thô vào) khớp Sequence Diagram
+    String result = dao.addReaderCard0(readerCode, fullName, phoneNumber, address, email, cardCode, issuanceDate, expiryDate);
 
     // BƯỚC 14, 15: Nhận kết quả và thông báo
     if ("SUCCESS".equals(result)) {

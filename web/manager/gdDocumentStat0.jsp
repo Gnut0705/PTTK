@@ -126,9 +126,9 @@
             return;
         }
 
-        // Bước 9 - 14: Gọi DocumentStatisticsDAO0 lấy danh sách thống kê
+        // Bước 9 - 14: Gọi DocumentStatisticsDAO0.getDocumentStat() lấy danh sách thống kê
         DocumentStatisticsDAO0 dao = new DocumentStatisticsDAO0();
-        listStats = dao.getDocumentStats(startDate, endDate);
+        listStats = dao.getDocumentStat(startDate, endDate);
     }
 %>
     <div class="card-container">

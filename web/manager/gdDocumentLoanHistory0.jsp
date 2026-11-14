@@ -94,9 +94,9 @@
     Date startDate = Date.valueOf(strStart);
     Date endDate = Date.valueOf(strEnd);
 
-    // Bước 18 - 23: Gọi LoanSlipDAO0 lấy danh sách các lần mượn của tài liệu
+    // Bước 18 - 23: Gọi LoanSlipDAO0.getLoanSlipByDocs() lấy danh sách các lần mượn của tài liệu
     LoanSlipDAO0 dao = new LoanSlipDAO0();
-    ArrayList<LoanSlip0> listSlips = dao.getLoanSlipsByDoc(idDoc, startDate, endDate);
+    ArrayList<LoanSlip0> listSlips = dao.getLoanSlipByDocs(idDoc, startDate, endDate);
 %>
     <div class="card-container">
         <h2>Chi tiết các lần tài liệu được mượn</h2>
@@ -133,9 +133,9 @@
                 %>
                 <tr>
                     <td><%= (i + 1) %></td>
-                    <!-- Bước 25, 26: Click chọn 1 lần mượn -> gọi gdLoanSlipDetail0.jsp -->
+                    <!-- Bước 25, 26: Click chọn 1 lần mượn -> gọi gdLoanSlipDetails0.jsp -->
                     <td>
-                        <a class="slip-link" href="gdLoanSlipDetail0.jsp?idLoanSlip=<%= ls.getId() %>"><%= slipCode %></a>
+                        <a class="slip-link" href="gdLoanSlipDetails0.jsp?idLoanSlip=<%= ls.getId() %>"><%= slipCode %></a>
                     </td>
                     <td style="text-align: left;"><%= ls.getReader().getFullName() %></td>
                     <td><%= ls.getBorrowingDate() %></td>
