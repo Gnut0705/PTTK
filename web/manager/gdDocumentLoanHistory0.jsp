@@ -1,11 +1,33 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.util.ArrayList,java.sql.Date,dao.*,model.*"%>
+    pageEncoding="UTF-8" import="java.util.ArrayList,dao.*,model.*"%>
+<%
+    Manager0 manager = (Manager0) session.getAttribute("manager");
+    if (manager == null) {
+        response.sendRedirect("../member/gdLogin0.jsp?err=session");
+        return;
+    }
+
+    int idLoanSlip = 0;
+    try {
+        idLoanSlip = Integer.parseInt(request.getParameter("idLoanSlip"));
+    } catch (Exception e) {
+        response.sendRedirect("gdDocumentStat0.jsp");
+        return;
+    }
+
+    // Bước 27 - 32: Gọi LoanSlipDetailsDAO0.getLoanSlipDetails() lấy chi tiết phiếu mượn
+    LoanSlipDetailsDAO0 dao = new LoanSlipDetailsDAO0();
+    ArrayList<LoanSlipDetails0> details = dao.getLoanSlipDetails(idLoanSlip);
+
+    LoanSlip0 slip = (details != null && !details.isEmpty()) ? details.get(0).getLoanSlip() : null;
+    String slipCode = "LS" + String.format("%02d", idLoanSlip);
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Chi tiet cac lan tai lieu duoc muon</title>
+<title>Chi tiet phieu muon</title>
 <style type="text/css">
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -41,6 +63,13 @@
         color: #334155;
         line-height: 1.8;
     }
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+    }
+    .info-col {
+        width: 48%;
+    }
     table.stat-table {
         width: 100%;
         border-collapse: collapse;
@@ -56,17 +85,6 @@
         background-color: #eff6ff;
         color: #1e40af;
         font-weight: 600;
-    }
-    table.stat-table tr:hover {
-        background-color: #f8fafc;
-    }
-    .slip-link {
-        color: #2563eb;
-        text-decoration: none;
-        font-weight: 600;
-    }
-    .slip-link:hover {
-        text-decoration: underline;
     }
     .btn-back {
         padding: 9px 20px;
@@ -84,62 +102,49 @@
 </style>
 </head>
 <body>
-<%
-    request.setCharacterEncoding("UTF-8");
-    int idDoc = Integer.parseInt(request.getParameter("idDoc"));
-    String docName = request.getParameter("docName");
-    String strStart = request.getParameter("startDate");
-    String strEnd = request.getParameter("endDate");
-
-    Date startDate = Date.valueOf(strStart);
-    Date endDate = Date.valueOf(strEnd);
-
-    // Bước 18 - 23: Gọi LoanSlipDAO0.getLoanSlipByDocs() lấy danh sách các lần mượn của tài liệu
-    LoanSlipDAO0 dao = new LoanSlipDAO0();
-    ArrayList<LoanSlip0> listSlips = dao.getLoanSlipByDocs(idDoc, startDate, endDate);
-%>
     <div class="card-container">
-        <h2>Chi tiết các lần tài liệu được mượn</h2>
+        <h2>Chi tiết phiếu mượn</h2>
 
+        <% if (slip != null) { %>
         <div class="info-box">
-            <div><b>Tài liệu:</b> <%= docName != null ? docName : "" %></div>
-            <div>
-                <b>Từ ngày:</b> <%= strStart %>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>Đến ngày:</b> <%= strEnd %>
+            <div><b>Mã phiếu mượn:</b> <%= slipCode %></div>
+            <div class="info-row">
+                <div class="info-col"><b>Bạn đọc:</b> <%= slip.getReader().getFullName() %></div>
+                <div class="info-col"><b>NV thư viện:</b> <%= slip.getLibrarian().getFullName() %></div>
+            </div>
+            <div class="info-row">
+                <div class="info-col"><b>Ngày mượn:</b> <%= slip.getBorrowingDate() %></div>
+                <div class="info-col"><b>Hạn trả:</b> <%= slip.getDueDate() %></div>
             </div>
         </div>
+        <% } %>
 
-        <!-- Bước 24: Hiển thị danh sách các lần tài liệu được mượn -->
+        <!-- Bước 33: Hiển thị chi tiết các tài liệu trong phiếu mượn -->
         <table class="stat-table">
             <thead>
                 <tr>
                     <th width="8%">TT</th>
-                    <th width="20%">Mã phiếu mượn</th>
-                    <th>Tên bạn đọc</th>
-                    <th width="20%">Ngày mượn</th>
-                    <th width="20%">Hạn trả</th>
+                    <th width="18%">Mã tài liệu</th>
+                    <th>Tên tài liệu</th>
+                    <th width="20%">Tình trạng</th>
+                    <th width="22%">Ghi chú</th>
                 </tr>
             </thead>
             <tbody>
-                <% if (listSlips == null || listSlips.isEmpty()) { %>
+                <% if (details == null || details.isEmpty()) { %>
                 <tr>
-                    <td colspan="5">Không có dữ liệu phiếu mượn.</td>
+                    <td colspan="5">Không có chi tiết tài liệu cho phiếu mượn này.</td>
                 </tr>
                 <% } else {
-                    for (int i = 0; i < listSlips.size(); i++) {
-                        LoanSlip0 ls = listSlips.get(i);
-                        String slipCode = "LS" + String.format("%02d", ls.getId());
+                    for (int i = 0; i < details.size(); i++) {
+                        LoanSlipDetails0 d = details.get(i);
                 %>
                 <tr>
                     <td><%= (i + 1) %></td>
-                    <!-- Bước 25, 26: Click chọn 1 lần mượn -> gọi gdLoanSlipDetails0.jsp -->
-                    <td>
-                        <a class="slip-link" href="gdLoanSlipDetails0.jsp?idLoanSlip=<%= ls.getId() %>"><%= slipCode %></a>
-                    </td>
-                    <td style="text-align: left;"><%= ls.getReader().getFullName() %></td>
-                    <td><%= ls.getBorrowingDate() %></td>
-                    <td><%= ls.getDueDate() %></td>
+                    <td><%= d.getDocument().getDocumentCode() %></td>
+                    <td style="text-align: left;"><%= d.getDocument().getName() %></td>
+                    <td><%= d.getStatus() %></td>
+                    <td style="text-align: left;"><%= d.getNote() != null ? d.getNote() : "" %></td>
                 </tr>
                 <%  }
                    } %>

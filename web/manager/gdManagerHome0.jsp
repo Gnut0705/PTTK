@@ -1,10 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" import="model.Manager0"%>
 <%
-    // Kiem tra phien dang nhap cua quan ly
     Manager0 manager = (Manager0) session.getAttribute("manager");
     if (manager == null) {
-        response.sendRedirect("gdLogin0.jsp");
+        response.sendRedirect("../member/gdLogin0.jsp?err=session");
         return;
     }
 %>
@@ -92,7 +91,7 @@
         <h2>Trang chủ quản lý</h2>
 
         <div class="user-greeting">
-            Xin chào, <b><%= manager.getFullName() %></b> 
+            Xin chào, <b><%= manager.getFullName() %></b>
             <% if (manager.getManagerCode() != null && !manager.getManagerCode().isEmpty()) { %>
                 (Mã: <%= manager.getManagerCode() %>)
             <% } %>
@@ -101,7 +100,7 @@
         <div class="button-group">
             <!-- Bước 1, 2: Click Xem báo cáo -> gọi gdSelectReport0.jsp -->
             <a href="gdSelectReport0.jsp" class="menu-link">Xem báo cáo</a>
-            <a href="doLogout0.jsp" class="btn-logout">Đăng xuất</a>
+            <a href="../member/doLogout0.jsp" class="btn-logout">Đăng xuất</a>
         </div>
     </div>
 </body>

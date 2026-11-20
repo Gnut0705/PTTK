@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8" import="model.Manager0"%>
+<%
+    Manager0 manager = (Manager0) session.getAttribute("manager");
+    if (manager == null) {
+        response.sendRedirect("../member/gdLogin0.jsp?err=session");
+        return;
+    }
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>

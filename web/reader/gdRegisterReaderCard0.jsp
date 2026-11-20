@@ -1,5 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.time.LocalDate,model.*"%>
+    pageEncoding="UTF-8" import="java.time.LocalDate,model.Reader0"%>
+<%
+    Reader0 reader = (Reader0) session.getAttribute("reader");
+    if (reader == null) {
+        response.sendRedirect("../member/gdLogin0.jsp?err=session");
+        return;
+    }
+
+    LocalDate issuanceDate = LocalDate.now();
+    LocalDate expiryDate = issuanceDate.plusYears(1);
+    String autoCardCode = String.format("RC%08d", System.currentTimeMillis() % 100000000L);
+
+    String curReaderCode = reader.getReaderCode() != null ? reader.getReaderCode() : "";
+    String curFullName = reader.getFullName() != null ? reader.getFullName() : "";
+    String curPhoneNumber = reader.getPhoneNumber() != null ? reader.getPhoneNumber() : "";
+    String curAddress = reader.getAddress() != null ? reader.getAddress() : "";
+    String curEmail = reader.getEmail() != null ? reader.getEmail() : "";
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -46,7 +63,8 @@
         color: #1e40af;
         border-bottom: 1px solid #e2e8f0;
     }
-    input[type="text"] {
+    input[type="text"],
+    input[type="email"] {
         width: 100%;
         padding: 9px 12px;
         border: 1px solid #cbd5e1;
@@ -55,7 +73,8 @@
         box-sizing: border-box;
         transition: border-color 0.2s, box-shadow 0.2s;
     }
-    input[type="text"]:focus {
+    input[type="text"]:focus,
+    input[type="email"]:focus {
         border-color: #2563eb;
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         outline: none;
@@ -97,11 +116,6 @@
 </style>
 </head>
 <body>
-<%
-    LocalDate issuanceDate = LocalDate.now();
-    LocalDate expiryDate = issuanceDate.plusYears(1);
-    String autoCardCode = "RC" + (System.currentTimeMillis() % 100000000L);
-%>
     <div class="form-container">
         <h2>Đăng ký làm thẻ bạn đọc</h2>
         <form name="dangkythe" action="doRegisterReaderCard0.jsp" method="post">
@@ -111,42 +125,50 @@
                 </tr>
                 <tr>
                     <td width="35%">Mã bạn đọc(MSV):</td>
-                    <td><input type="text" name="txtReaderCode" placeholder="Nhập mã sinh viên (VD: B23DCCN000)..." required /></td>
+                    <td><input type="text" name="txtReaderCode" value="<%= curReaderCode %>"
+                               placeholder="Nhập mã sinh viên (VD: B23DCCN900)..." required /></td>
                 </tr>
                 <tr>
                     <td>Họ và tên:</td>
-                    <td><input type="text" name="txtFullName" placeholder="Nhập họ và tên..." required /></td>
+                    <td><input type="text" name="txtFullName" value="<%= curFullName %>"
+                               placeholder="Nhập họ và tên..." required /></td>
                 </tr>
                 <tr>
                     <td>Số điện thoại:</td>
-                    <td><input type="text" name="txtPhoneNumber" placeholder="Nhập số điện thoại..." required /></td>
+                    <td><input type="text" name="txtPhoneNumber" value="<%= curPhoneNumber %>"
+                               pattern="0[0-9]{9}"
+                               title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0"
+                               placeholder="Nhập số điện thoại..." required /></td>
                 </tr>
                 <tr>
                     <td>Địa chỉ:</td>
-                    <td><input type="text" name="txtAddress" placeholder="Nhập địa chỉ..." required /></td>
+                    <td><input type="text" name="txtAddress" value="<%= curAddress %>"
+                               placeholder="Nhập địa chỉ..." required /></td>
                 </tr>
                 <tr>
                     <td>Email:</td>
-                    <td><input type="text" name="txtEmail" placeholder="Nhập địa chỉ email..." required /></td>
+                    <td><input type="email" name="txtEmail" value="<%= curEmail %>"
+                               placeholder="Nhập địa chỉ email..." required /></td>
                 </tr>
                 <tr>
                     <td colspan="2" class="section-title"><b>Thông tin thẻ</b></td>
                 </tr>
                 <tr>
                     <td>Mã thẻ:</td>
-                    <td><input type="text" name="txtCardCode" value="<%=autoCardCode%>" readonly /></td>
+                    <td><input type="text" name="txtCardCode" value="<%= autoCardCode %>" readonly /></td>
                 </tr>
                 <tr>
                     <td>Ngày cấp:</td>
-                    <td><input type="text" name="txtCardIssuanceDate" value="<%=issuanceDate.toString()%>" readonly /></td>
+                    <td><input type="text" name="txtCardIssuanceDate" value="<%= issuanceDate.toString() %>" readonly /></td>
                 </tr>
                 <tr>
                     <td>Ngày hết hạn:</td>
-                    <td><input type="text" name="txtExpiry" value="<%=expiryDate.toString()%>" readonly /></td>
+                    <td><input type="text" name="txtExpiry" value="<%= expiryDate.toString() %>" readonly /></td>
                 </tr>
                 <tr>
                     <td colspan="2" class="btn-group">
-                        <button type="button" class="btn btn-back" onclick="history.back()">Quay lại</button>
+                        <button type="button" class="btn btn-back"
+                                onclick="window.location.href='gdReaderHome0.jsp'">Quay lại</button>
                         <input type="submit" class="btn btn-submit" name="btnAdd" value="Thêm" />
                     </td>
                 </tr>

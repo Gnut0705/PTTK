@@ -7,8 +7,9 @@
 </head>
 <body>
 <%
-    // Xoa session cua quan ly
     session.removeAttribute("manager");
+    session.removeAttribute("reader");
+    session.removeAttribute("member");
     session.invalidate();
     response.sendRedirect("gdLogin0.jsp");
 %>

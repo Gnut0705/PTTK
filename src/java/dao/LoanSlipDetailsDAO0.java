@@ -15,8 +15,11 @@ public class LoanSlipDetailsDAO0 extends DAO0 {
         super();
     }
 
+    // Bước 28: getLoanSlipDetails() khớp Stored Procedure & Sequence Diagram
     public ArrayList<LoanSlipDetails0> getLoanSlipDetails(int idLoanSlip) {
         ArrayList<LoanSlipDetails0> result = new ArrayList<>();
+        if (this.con == null) return result;
+
         String sql = "{call getLoanSlipDetails(?)}";
         try (CallableStatement cs = con.prepareCall(sql)) {
             cs.setInt(1, idLoanSlip);

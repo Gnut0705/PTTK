@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" import="java.util.ArrayList,java.sql.Date,java.net.URLEncoder,dao.*,model.*"%>
+<%
+    Manager0 manager = (Manager0) session.getAttribute("manager");
+    if (manager == null) {
+        response.sendRedirect("../member/gdLogin0.jsp?err=session");
+        return;
+    }
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -111,9 +118,21 @@
     String strEnd = request.getParameter("txtEndDate");
     ArrayList<DocumentStatistics0> listStats = null;
 
-    if (strStart != null && !strStart.isEmpty() && strEnd != null && !strEnd.isEmpty()) {
-        Date startDate = Date.valueOf(strStart);
-        Date endDate = Date.valueOf(strEnd);
+    if (strStart != null && !strStart.trim().isEmpty() && strEnd != null && !strEnd.trim().isEmpty()) {
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = Date.valueOf(strStart.trim());
+            endDate = Date.valueOf(strEnd.trim());
+        } catch (Exception e) {
+%>
+            <script type="text/javascript">
+                alert("Khoảng thời gian thống kê không hợp lệ!");
+                history.back();
+            </script>
+<%
+            return;
+        }
 
         // Kiểm tra ngoại lệ 5.1: Ngày bắt đầu lớn hơn ngày kết thúc
         if (startDate.after(endDate)) {
@@ -126,15 +145,14 @@
             return;
         }
 
-        // Bước 9 - 14: Gọi DocumentStatisticsDAO0.getDocumentStat() lấy danh sách thống kê
+        // Bước 9 - 14: Gọi DocumentStatisticsDAO0.getDocumentStats() lấy danh sách thống kê
         DocumentStatisticsDAO0 dao = new DocumentStatisticsDAO0();
-        listStats = dao.getDocumentStat(startDate, endDate);
+        listStats = dao.getDocumentStats(startDate, endDate);
     }
 %>
     <div class="card-container">
         <h2>Thống kê tài liệu theo số lần mượn</h2>
 
-        <!-- Form chọn ngày bắt đầu, ngày kết thúc -->
         <form class="filter-form" name="thongketailieu" action="gdDocumentStat0.jsp" method="get">
             <div>
                 <label><b>Ngày bắt đầu:</b></label>
@@ -170,8 +188,8 @@
                         String encodedName = URLEncoder.encode(doc.getName(), "UTF-8");
                         String detailUrl = "gdDocumentLoanHistory0.jsp?idDoc=" + doc.getId()
                                          + "&docName=" + encodedName
-                                         + "&startDate=" + strStart
-                                         + "&endDate=" + strEnd;
+                                         + "&startDate=" + strStart.trim()
+                                         + "&endDate=" + strEnd.trim();
                 %>
                 <tr>
                     <td><%= (i + 1) %></td>

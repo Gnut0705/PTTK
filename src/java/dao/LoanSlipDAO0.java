@@ -14,9 +14,11 @@ public class LoanSlipDAO0 extends DAO0 {
         super();
     }
 
-    // Bước 19: getLoanSlipByDocs() khớp chuẩn xác Sequence Diagram
-    public ArrayList<LoanSlip0> getLoanSlipByDocs(int idDoc, Date startDate, Date endDate) {
+    // Bước 19: getLoanSlipsByDoc() khớp Stored Procedure & Sequence Diagram
+    public ArrayList<LoanSlip0> getLoanSlipsByDoc(int idDoc, Date startDate, Date endDate) {
         ArrayList<LoanSlip0> result = new ArrayList<>();
+        if (this.con == null) return result;
+
         String sql = "{call getLoanSlipsByDoc(?, ?, ?)}";
         try (CallableStatement cs = con.prepareCall(sql)) {
             cs.setInt(1, idDoc);
@@ -45,10 +47,5 @@ public class LoanSlipDAO0 extends DAO0 {
             e.printStackTrace();
         }
         return result;
-    }
-
-    // Giữ thêm alias getLoanSlipsByDoc để tương thích ngược
-    public ArrayList<LoanSlip0> getLoanSlipsByDoc(int idDoc, Date startDate, Date endDate) {
-        return getLoanSlipByDocs(idDoc, startDate, endDate);
     }
 }
